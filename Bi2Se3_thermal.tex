@@ -16,14 +16,14 @@
 
 \begin{document}
 
-\title{Heat transfer from an ultrafast laser heated metal film to a substrate}
+\title{Heat transfer from ultrafast laser heated Bi$_2$Se$_3$ film to a sapphire substrate}
 \author{Eric Landahl}
 %\date{}
 
 \maketitle
 
 \section{Introduction}
-This note describes how to calculate one-dimensional thermal transport from an ultrafast laser excited metal film into a substrate.  The laser rapidly  ($\approx$ 1 ps) raises the temperature of the film uniformly.  The film has been depositied on top of a bulk material, which is initially at a uniform colder temperature.   The specific experiments considered are a 70 nm thick Aluminum film sputtered on top of four different bulk semiconducor crystalline wafers:  Silicon, Gallium Arsenide, Indium Antimonide, and Germanium.  The different thermal properties of these bulk semiconductor materials provide a useful comparitive study.  Metal-on-semiconductor devices are important technologically, and we are undertaking a quantituative study of their heat transport using time-resolved x-ray diffraction.  This note describes the different transport models which can be used to simulate the results of the diffraction experiments. 
+This note describes how to calculate one-dimensional thermal transport from an ultrafast laser excited Bismuth Selenide film into a sapphire substrate.  The laser rapidly  ($\approx$ 1 ps) raises the temperature of the film uniformly.  The film has been depositied on top of a bulk material, which is initially at a uniform colder temperature.   The specific experiments considered are 20 nm and 150 nm thick films on top of sapphire (on the optic axis).  This treatment neglects the nanoscale properties of the Bismuth Selenide films, which in fact is made of multiple quantum layers.  
 
 \section{Classical Treatment}
 
@@ -57,7 +57,7 @@ and the initial conditions
 \end{align}
 \end{subequations}
 where $k_i$ are the thermal conductivities and $\alpha_i$ are the thermal diffusivities of region 1 (film) and region 2 (bulk).  
-Using Laplace rransforms, the solution for the temperature distribution in the two-layer medium is
+Using Laplace transforms, the solution for the temperature distribution in the two-layer medium is
 \begin{subequations}
 \begin{align}
 & \dfrac{T_1(x,t)}{T_0}=1-\dfrac{1+\gamma}{2}\sum\limits_{n=0}^\infty \gamma^n \Bigg\{ \textnormal{erfc} \left[ \dfrac{(2n+1)L-x}{2\sqrt{\alpha_1 t}} \right] + \textnormal{erfc} \left[ \dfrac{(2n+1)L-x}{2\sqrt{\alpha_1 t}} \right] \Bigg\}  \\
@@ -74,64 +74,60 @@ where the unitless parameters $\mu$ and $\gamma$ are defined by
 \end{subequations}
 
 \subsection{Examples of the classical heat conduction result}
-We consider a 70 nm Aluminum film directly on top of bulk semiconductors.  In addition to calculating the temperature profile evolution in the film and substate, we perform Time-Resolved X-Ray Diffraction (TRXD) calculations to predict the evolution of Bragg reflection lineshapes following laser excitation.  For each material, the absorbed laser fluence is kept constant at 1 mJ/cm$^2$.  TRXD measurements are all done for single crystal (001) cut semiconductors at the [004] reflection at an x-ray energy of 10 keV.  In these preliminary calculations only the lineshapes, and not the absolute intensiteis of the diffraction profiles are considered, and they are blurred by convolving the results of a dynamical diffraction calculation with a 0.2 millidegree FWHM Gaussian resolution function.  The TRXD calculations should be considered still under development and requiring further benchmarking at this time.  The temperature profiles are calcualated on a logarithmic time grid stretching from 1 ps to 1 $\mu$s.  
-\newpage
-\subsubsection{Aluminum on Silicon}
-The 70 nm thick Aluminum film received an initial temperature rise of 58.3 deg C. After 1 $\mu$s, the average film temperature rise was only 0.4 deg C.  The maximum bulk Silicon temperature rise wass 34.0 deg C.
-\begin{figure}
-\includegraphics[scale = 0.65]{Si_Temp.png}
-\caption{Classical thermal transport result for 70 nm Al on Si.}
-\end{figure}
-\begin{figure}
-\includegraphics[scale = 0.65]{Si_TRXD.png}
-\caption{Preliminary TRXD calculations corresponding to classical thermal transport result for 70 nm Al on Si.}
-\end{figure}
-\newpage
-\subsubsection{Aluminum on Gallium Arsenide}
-The 70 nm thick Aluminum film received an initial temperature rise of 58.3 deg C. After 1 $\mu$s, the average film temperature rise was only 0.6 deg C.  The maximum bulk Silicon temperature rise was 39.3 deg C.
-\begin{figure}
-\includegraphics[scale = 0.65]{GaAs_Temp.png}
-\caption{Classical thermal transport result for 70 nm Al on Si.}
-\end{figure}
-\begin{figure}
-\includegraphics[scale = 0.65]{GaAs_TRXD.png}
-\caption{Preliminary TRXD calculations corresponding to classical thermal transport result for 70 nm Al on GaAs.}
-\end{figure}
-\newpage
-\subsubsection{Aluminum on Germanium}
-The 70 nm thick Aluminum film received an initial temperature rise of 58.3 deg C. After 1 $\mu$s, the average film temperature rise was only 0.6 deg C.  The maximum bulk Germanium temperature rise was 39.6 deg C.
-\begin{figure}
-\includegraphics[scale = 0.65]{Ge_Temp.png}
-\caption{Classical thermal transport result for 70 nm Al on Si.}
-\end{figure}
-\begin{figure}
-\includegraphics[scale = 0.65]{Ge_TRXD.png}
-\caption{Preliminary TRXD calculations corresponding to classical thermal transport result for 70 nm Al on Ge.}
-\end{figure}
-\newpage
-\subsubsection{Aluminum on Indium Antimonide}
-The 70 nm thick Aluminum film received an initial temperature rise of 58.3 deg C. After 1 $\mu$s, the average film temperature rise was only 1.2 deg C.  The maximum bulk Indium Antimonide temperature rise was 47.3 deg C.
-\begin{figure}
-\includegraphics[scale = 0.65]{InSb_Temp.png}
-\caption{Classical thermal transport result for 70 nm Al on Si.}
-\end{figure}
-\begin{figure}
-\includegraphics[scale = 0.65]{InSb_TRXD.png}
-\caption{Preliminary TRXD calculations corresponding to classical thermal transport result for 70 nm Al on InSb.}
-\end{figure}
-\newpage
-\subsection{Imperfect thermal contact}
-This section will explore corrections to the classical treatment due to imperfect thermal contact between the film and substrate.  In particular, the ``Diffusive Mismatch Model" can be used to correct the classical heat conductivity values by applying a locally quantum model of heat flow.  
-\section{Microscopic Treatment}
-Considerable recent interest in this problem at the 10 - 100 nm lengthscales has been motivated by the semiconductor fabrication techniques working at these dimensions.  The classical treatment given above, even including corrections for interfaces, is known to be insufficient since the phonon mean free path, $\Lambda$, can be comparable to these dimensions.  This section will explain a simple one-dimensional Lattice Boltzman Model (LBM) to treat heat flow as a phonon transport problem.  
+In addition to calculating the temperature profile evolution in the film and substate, we perform kinematic Time-Resolved X-Ray Diffraction (TRXD) calculations to predict the evolution of diffraction peak angle shift from the average heating of the filmat an absorbed fluence of 0.1 mJ/cm$^2$.  TRXD measurements are all done for the [006] reflection at an x-ray energy of 10 keV. The average centroid shift is calculated using the differential Bragg formula, 
+\begin{equation}
+\Delta \theta = - \dfrac{\alpha_t \langle T_1 \rangle}{cot(\theta_B)}
+\end{equation}
+whre $\alpha_t$ is the thermal expansion coefficient, $\langle T_1 \rangle$ is the mean temperature of the film, $\Delta \theta$ is the peak centroid shift to be measured by comparission with the rocking curve before the laser excites the sample, and $\theta_B$ is the Bragg angle. For these experimental parameters, $\theta_B = 7.7^{\circ}$ and $\alpha_t = 1.9 \times 10^{-5}$.
 \pagebreak
+\subsubsection{20 nm film}
+A 20 nm thick film gives a temperature rise of 38.6 K.  After 9.9 ns, the average film temperature rise is only 0.7 deg C.  The maximum bulk temperature rise is only 3.4 deg C.
+\begin{figure}[h]
+\includegraphics[scale = 0.5]{TempProfile20.png}
+\caption{Classical thermal transport result for 20 nm Bi$_2$Se$_3$ on Sapphire  with an absorbed laser fluence of 0.1 mJ/cm$^2$.}
+\end{figure}
+\begin{figure}[h]
+\includegraphics[scale = 0.5]{CentroidShift20.png}
+\caption{TRXD calculations corresponding to classical thermal transport result for 20 nm Bi$_2$Se$_3$ on Sapphire.  This is a kinematic diffraction calculation, and the centroid shift is measured relative to before the laser excites the sample.}
+\end{figure}
+\newpage
+\subsubsection{150 nm film}
+A 150 nm thick film gives a temperature rise of 5.1 K.  After 9.9 ns, the average film temperature rise is only 2.5 deg C. The maximum bulk temperature rise is only 0.5 deg C.
+\begin{figure}[h]
+\includegraphics[scale = 0.55]{TempProfile150.png}
+\caption{Classical thermal transport result for 150 nm Bi$_2$Se$_3$ on Sapphire with an absorbed laser fluence of 0.1 mJ/cm$^2$.}
+\end{figure}
+\begin{figure}[h]
+\includegraphics[scale = 0.55]{CentroidShift150.png}
+\caption{TRXD calculations corresponding to classical thermal transport result for 150 nm Bi$_2$Se$_3$ on Sapphire.  This is a kinematic diffraction calculation, and the centroid shift is measured relative to before the laser excites the sample.}
+\end{figure}
+
+\newpage
+
 
 \section*{Appendix: Parameters}
 
+\begin{table}[h]
+\begin{centering}
+\begin{tabular}{c | c | c | c}
+parameter  & Bi$_2$Se$_3$ & Sapphire & unit \\
+\hline
+Specific Heat & 189.83 & 761.00 & J/(kg K) \\
+Density & 6820 & 3980 & kg/m$^3$ \\
+Thermal Conductivity & 0.75 & 23.1 & W/(m K) \\
+Thermal Expansion & 1.9 $\times 10^{-5}$ & - & 1/K \\
+Bragg Angle & 7.7 & - & degrees \\
+\end{tabular} 
+\caption{Material properties used in these calculations. }
+\label{table:sign_conventions}
+\end{centering}
+\end{table}
+
+\pagebreak
 \section*{Appendix: Code}
 
-The most recent and up to date code should be obtained from \url{https://github.com/elandahl/dynamical-diffraction/tree/TRXD/strain_functions}.  This code listing is for reference only. 
- 
-\verbatiminput{../thermalFilm.m}
+The most recent and up to date code should be obtained from \url{https://github.com/elandahl/Bi2Se3_thermal}.  This code listing is for reference only. 
+
+\verbatiminput{Bi2Se3_thermal.m}
 
 \end{document}

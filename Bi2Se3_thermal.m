@@ -1,83 +1,58 @@
 % thermalFilm.m
-% Classical strain model for a thin Aluminum film on a semiconductor
+% Classical thermal calc for Bismuth Selenide (Bi2Se3) film on sapphire substrate
 % Presumes that the temperature rise on the film is uniform and instantaneous
 % and that the thermal contact is perfect
 % A more sophisticated model with better Physics (e.g. AMM, DMM) will be needed!
 % Also, does not include nanoscale phenomena (e.g. phonon mean free path)
 % Also, no acoustic propogation is included.  This could be called later.
 % Model: see p. 429 (Sec. 10.7) of Hahn, "Heat Conduction" 3rd edition
-% Aluminum properties are hard coded
-% Semiconductor properties looked up in sample.dat, which is required
-% First written by Eric Landahl, 12.28.2016
-% Revised by EL 1.9.2017
-% Usually called by TRXD.m
+% Material properties are hard coded
+% Based on thermalFilm.m, First written by Eric Landahl, 12.28.2016
+% Revised by EL 2.12.2017
 %
 %% INPUTS:
-%   crystal     determines x-ray and strain properties, chosen from:
-%     GaAs
-%     Si
-%     Ge
-%     InSb
+%   L           Bi2Se3 film thickness in meters (sapphire substrate is infinite)
 %   fluence     absorbed laser fluence in mJ/cm^2
 %   time        a vector of times to be calculated in seconds
-%   max_depth   usually 5*Lext, Lext is the x-ray extinction length in meters
+%   max_depth   maximum depth calculated into sapphire, typ. 5 * extinction depth
 %% OUTPUTS:
-%   longitudinal    longitudinal strain, size = length(time_out) x length(z)
-%   transverse      transverse strain, size = length(time_out) x length(z)
-%   sheer           sheer strain, size = length(time_out) x length(z)
-%   z               a vector of depths in meters
-%   time_out        a vector of times returned in seconds, not the same as time_in
-%
-%% NOTE: The strain will be calculated out to time_in(end) however the time-steps
-%        are chosen for convenience and accuracy in evaluating the strain. 
-%        time_in is NOT usually equal to time_out
-%        therefore the strain must be interpolated temporally after calling this
-%        function
-%
-%% NOTE ALSO: Three strain components are returned, but usually only longitudinal
-%             is non-zeros
+%   T1         temperature of film, size = length(time) x length(z1)
+%   T2         temperature of substrate, size = length(time) x length(z2)
+%   z1         a vector of film depths in meters
+%   z2         a vector of substrate depths in meters
 %
 %% TYPICAL USAGE
 % 
-% [st1 st2 st3 time_out z] = thermalFilm ('Si', 1, (1e-10:2e-10:1e-8), 1e-5);
+% [T1 T2 z1 z2] = Bi2Se3_thermal (150e-9, 1, (1e-10:2e-10:1e-8), 1e-5);
 %
-function [longitudinal trans sheer time_out z]=thermalFilm(crystal,fluence,time_in,max_depth)
+function [T1 T2 z1 z2]=Bi2Se3_thermal (L,fluence,time,max_depth)
 
-% Remesh time
-  time = time_in; 
-  % In this simple model, there is no penalty for calculating many timepoints
-  % so the given array of timepoints is used. 
-
-% Aluminum film properties.  "1" refers to the film
-  L = 70e-9; % Film thickness in m
-  C1 = 904; %Specific heat of film in J/(kg K)
-  rho1 = 2712; % Film density in kg/m^3
-  k1 = 204; % Film thermal conductivity in W/(m K)
-  alpha1 = 8.418E-5; % Film thermal diffusivity in m^2/s
+% Bi2Se3 film properties.  "1" refers to the film
+  C1 = 124.3*1000/654.8; %Specific heat of film in J/(kg K)
+  rho1 = 6.82e3; % Film density in kg/m^3
+  k1 = 0.75; % Film thermal conductivity in W/(m K)
+  %alpha1 = 0.312e-4 % Film thermal diffusivity in m^2/s
+  alpha1 = k1/(rho1 * C1); % Film thermal diffusivity in m^2/s
   
-% Load substrate properties.  "2" referes to the substrate
-  sampledata
-  ID = find(strcmp({sample.name}, crystal)==1);
-  alpha_t = sample(ID).thermalExpansion.val; % 1/K
-  alpha2 = sample(ID).thermalDiffusion.val; % cm^2/s
-  alpha2 = alpha2 / 10000; % convert from cm^2/s to m^2/s
-  k2 = sample(ID).thermalConductivity.val; % W/(cm K)
-  k2 = k2 * 100; % Convert from W/(cm K) to W/(m K)
-  C2 = sample(ID).specificHeat.val; % J/(g K)
-  C2 = C2 * 1000; % Convert from J/(g K) to J/(kg K)
-  rho2 = sample(ID).massDensity.val; % g/cm^3
-  rho2 = rho2 * 1000; % Convert from g/cm^3 to kg/m^3
-  
+% Sahhpire substrate properties.  "2" referes to the substrate
+  C2 = 761; % Specific heat of sapphire in J/(kg K)
+  rho2 = 3.98e3; % Sapphire density in kg/m^3
+  k2 = 23.1; % Sapphire thermal conductivity in W/(m K) parallel to optic axis
+  alpha2 = k2/(rho2 * C2); % Sapphire thermal diffusivity in m^2/s
   
   %% Temporary for troubleshooting: make the sampe all semiconductor
 %  rho1 = rho2;
 %  k1 = k2;
 %  C1 = C2;
+%  alpha1 = alpha2;
+[k1 k2]
+[C1 C2]
+[rho1 rho2]
  
 % Calculate initial temperature rise
   fluence = fluence*10; % Convert from mJ/cm^2 to J/m^2
   T0 = fluence/(L * C1 * rho1); % Initial temperature rise in film
-  fprintf('A %d nm thick Aluminum film gives a temperature rise of %.1f K.\n',L*1e9,T0)
+  fprintf('A %d nm thick Bi2Se3 film gives a temperature rise of %.1f K.\n',L*1e9,T0)
   
 % Unitless parameters (see Hahn, "Thermal Conductivity", Eqs. 10-135 and 10-138)  
   mu = sqrt(alpha1/alpha2);
@@ -85,7 +60,7 @@ function [longitudinal trans sheer time_out z]=thermalFilm(crystal,fluence,time_
   gamma = (beta - 1)/(beta + 1);
   
 % Spatial grid
-  num_depths = 10000;  % number of depth points z to be calculated
+  num_depths = 1000;  % number of depth points z to be calculated
   dz = max_depth/num_depths;
   z = dz:dz:max_depth;
   
@@ -102,7 +77,7 @@ function [longitudinal trans sheer time_out z]=thermalFilm(crystal,fluence,time_
   end
   T2 = T0 * (1/2) * (1 + gamma) * T2a; % Temperature at all z and time  
   
-% Film calculations are not needed except to check conservation of energy
+% Film calculations 
 % Calculate temperature profile in film.  zz and ZZ are the film depths
   dzz = L/100; % Choose 100 depth points in the film by default  
   zz = dzz:dzz:L;
@@ -117,8 +92,10 @@ function [longitudinal trans sheer time_out z]=thermalFilm(crystal,fluence,time_
   T1_end = mean(T1(:,end)); % Average temperature at final timepoint
   fprintf('After %.1f ns, the average film temperature rise is only %.1f deg C.\n', ...
   time(end)*1e9,T1_end);
-  fprintf('The maximum bulk %s temperature rise is %.1f deg C.\n',crystal, ...
-  max(max(T2)));
+  fprintf('The maximum bulk temperature rise is %.1f deg C.\n', max(max(T2)));
+  
+  z1 = zz; % for output
+  z2 = z; % for output
   
 % Calculate heat in film
 % Q = integral dzz of rho*C*T
@@ -127,13 +104,6 @@ function [longitudinal trans sheer time_out z]=thermalFilm(crystal,fluence,time_
 %  Q1 = Q1/10; % convert from J/m^2 to mJ/cm^2
 %  Q2 = Q2/10; % convert from J/m^2 to mJ/cm^2
   
- 
-% Calculate strains in bulk
-  longitudinal = alpha_t.*T2'; % Strain is thermal expansion coeff times temperature
-  trans =0.*T2'; % No transverse strain
-  sheer = 0.*T2'; % No sheer strain
-  time_out = time;
-
 % Outputs not needed for TRXD
 
 save thermalFilmOut.m; % Save all variables for future use
